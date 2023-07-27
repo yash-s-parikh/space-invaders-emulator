@@ -83,31 +83,6 @@ int main(int argc, char* args[]) {
     state->pc=0x0000;
     unsigned char *opcode = &state->memory[state->pc];
 
-    //TESTING
-    int instructioncount = 0;
-    State8080 currenttestState;
-    State8080* teststate = &currenttestState;
-    teststate->int_enable = 0;
-    char* testbuffer = (char*)malloc(MEMORY_SIZE);
-    memcpy(testbuffer, buffer, MEMORY_SIZE);
-    teststate->memory = testbuffer;
-    teststate->pc = 0x0000;
-    teststate->a = 0; teststate->b = 0; teststate->c = 0; teststate->d = 0; teststate->e = 0; teststate->h = 0; teststate->l = 0; teststate->pc = 0;
-    teststate->cc.z = 0; teststate->cc.s = 0; teststate->cc.p = 0; teststate->cc.cy = 0; teststate->cc.ac = 0;  
-    Ports testcurrentPorts; //intialize ports
-    testcurrentPorts = (Ports){
-        .read0 = 0x0F,
-        .read1 = 0x09,
-        .read2 = 0x0F,
-    };
-    Ports* testports = &currentPorts; //ptr to ports
-    Shift testcurrentShift; //initialize shift reg
-    Shift* testshift = &currentShift; //ptr to shift reg
-    uint16_t testlastsp = 0;
-    uint16_t testlastpc = 0;
-    uint16_t lastsp = 0;
-    uint16_t lastpc = 0;
-
     //Display 
     displayInit(windowptr, screenSurfaceptr);
 
@@ -147,15 +122,9 @@ int main(int argc, char* args[]) {
             starttime = clock;
 
         }
-     //   if(state->memory[0x21ff] !=0xcd ) printf("21ff value is %x\n", state->memory[0x21ff]);
         //get the next instruction
         opcode = &state->memory[state->pc];
-        if (state->sp < -0x22ff) {
-            printf("Stack too low\n");
-        }
-        if (state->pc == 0x0100)         {
-            printf("reached x at %d instructions\n", instructioncount);
-        }
+
         //machine specific handling for IN    
         if (*opcode == 0xdb) {
             MachineIN(state, shift, ports, opcode[1]);
@@ -169,31 +138,8 @@ int main(int argc, char* args[]) {
 
         }
 
-       // printf("0x%04x    ", state->pc);
-       // disassembler(&(state->memory[state->pc]));
-       // comparestate(state, teststate, lastpc, testlastpc, lastsp, testlastsp);
-        lastsp = state->sp;
-        lastpc = state->pc;
-        testlastsp = teststate->sp;
-        testlastpc = teststate->pc;
-
         cycles = Emulate8080Op(state);
 
-        Emulate8080Optest(teststate);
-        instructioncount++;
-       /* if (instructioncount % 1 == 0 && instructioncount >= 2315494 - 100) {
-            printf("%d\n", instructioncount);
-            printf("0x%04x    ", state->pc);
-            disassembler(&(state->memory[state->pc]));
-            printstate(state);
-            if(instructioncount % 100 == 0) 
-                printf("\n");
-        }
-     */
-        //printf("0x%04x    ", state->pc);
-        //disassembler(&(state->memory[state->pc]));
-        
-       comparestate(state, teststate, lastpc, testlastpc, lastsp, testlastsp);
 
         //Timing
         clock += cycles;
@@ -201,10 +147,6 @@ int main(int argc, char* args[]) {
             Sleep(1);
             sleeptime = clock;
         }
-       
-  
-
-      
        
      }
     /*
