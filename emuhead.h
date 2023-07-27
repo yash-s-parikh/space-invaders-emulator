@@ -80,18 +80,8 @@ int displayClose(SDL_Window** windowptr, SDL_Surface** screenSurfaceptr);
 void SIKeyboardHandler(Ports* ports, SDL_Event* eptr); 
 uint8_t bytereverse(uint8_t byte);
 
-int Emulate8080Optest(State8080* state);
-void LogicFlagsA(State8080* state);
-void ArithFlagsA(State8080* state, uint16_t res);
-int parity(int x, int size);
-
 void printstate(State8080* state);
-/*
-int Emulate8080Optest(State8080* state);
-void LogicFlagsA(State8080* state);
-void ArithFlagsA(State8080* state, uint16_t res);
-int parity(int x, int size);
-*/
+
 //Clock cycle constants
 #define MOV_R1R2    5
 #define MOV_MR      7
